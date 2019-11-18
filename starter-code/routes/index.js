@@ -5,6 +5,7 @@ const router = Router();
 
 const User = require("./../models/user");
 const bcryptjs = require("bcryptjs");
+const privateRoute = require("./../middleware/private");
 
 router.get("/", (req, res, next) => {
   res.render("index");
@@ -67,4 +68,43 @@ router.post("/sign-up", (req, res, next) => {
       next(error);
     });
 });
+
+router.get("/sign-out", (req, res, next) => {
+  req.session.destroy(error => {
+    res.redirect("/");
+  });
+});
+
+//Private Pages
+
+router.get("/main", privateRoute, (req, res, next) => {
+  res.render("main");
+});
+
+router.get("/private", privateRoute, (req, res, next) => {
+  res.render("private");
+});
+
+router.get("/profile", privateRoute, (req, res, next) => {
+  res.render("profile");
+});
+
+router.get("/edit", privateRoute, (req, res, next) => {
+  res.render("edit");
+});
+
+router.post("/edit", privateRoute, (req, res, next) => {
+  let userId = req.session.user;
+  User.findByIdAndUpdate(userId, {
+    realName: req.body.realName
+  })
+    .then(user => {
+      res.redirect("/");
+      console.log("User Edited", user, realName);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+
 module.exports = router;

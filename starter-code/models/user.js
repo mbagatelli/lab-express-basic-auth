@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema(
     passwordHash: {
       type: String,
       required: true
-    }
+    },
+    realName: String
   },
   {
     timestamps: true
